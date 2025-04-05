@@ -4,6 +4,7 @@ const chat = document.getElementById("chat");
 const userListElement = document.getElementById("userList");
 const setNameButton = document.getElementById("setNameButton");
 const usernameInput = document.getElementById("username");
+const modal = document.getElementById("nameModal");
 
 const template = "<li class=\"list-group-item\">%MESSAGE</li>";
 const messages = [];
@@ -12,21 +13,14 @@ const users = [];
 const socket = io();
 
 window.onload = () => {
-  $('#nameModal').modal('show');
+    modal.style.display = "block";
 };
 
 setNameButton.onclick = () => {
   const username = usernameInput.value.trim();
   if (username) {
     socket.emit("setName", username);
-    $('#nameModal').modal('hide');
-  }
-};
-
-input.onkeydown = (event) => {
-  if (event.keyCode === 13) {
-    event.preventDefault();
-    button.click();
+    modal.style.display = "none";
   }
 };
 
@@ -35,23 +29,20 @@ button.onclick = () => {
   input.value = "";
 };
 
-// Ricezione messaggi di chat
 socket.on("chat", (message) => {
   console.log(message);
   messages.push(message);
   renderChat();
 });
 
-// Ricezione lista utenti
 socket.on("list", (list) => {
-  users.length = 0; // Pulisci l'array degli utenti
+  users.length = 0;
   list.forEach(user => {
     users.push(user.name);
   });
   renderUserList();
 });
 
-// Funzione per rendere la chat
 const renderChat = () => {
   let html = "";
   messages.forEach((message) => {
@@ -62,9 +53,8 @@ const renderChat = () => {
   window.scrollTo(0, document.body.scrollHeight);
 };
 
-// Funzione per rendere la lista degli utenti
 const renderUserList = () => {
-  userListElement.innerHTML = ""; // Pulisci la lista esistente
+  userListElement.innerHTML = "";
   users.forEach((user) => {
     const row = `<li class="list-group-item">${user}</li>`;
     userListElement.innerHTML += row;
